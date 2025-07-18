@@ -1,64 +1,74 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { jwtDecode } from "jwt-decode";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Logout: clears state + storage
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-  };
-
-  // Login: save to state + localStorage
-  const login = (userData, tokenData) => {
+  const login = (token, userData, redirect = true) => {
     setUser(userData);
-    setToken(tokenData);
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", tokenData);
+    if (token) {
+      // Store token only if passed (e.g., in traditional login)
+      localStorage.setItem("token", token);
+    }
+    if (redirect) {
+      navigate("/dashboard");
+    }
   };
 
-  // Check token on load & setup auto logout
+  const logout = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/auth/logout", null, {
+        withCredentials: true,
+      });
+      toast.success("Logged out");
+    } catch (err) {
+      toast.error("Logout failed");
+    } finally {
+      setUser(null);
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
+  };
+
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const savedToken = localStorage.getItem("token");
-
-    if (savedUser && savedToken) {
+    const checkAuth = async () => {
       try {
-        const decoded = jwtDecode(savedToken);
-        const exp = decoded.exp * 1000;
-        const now = Date.now();
+        const res = await axios.get("http://localhost:5000/api/auth/me", {
+          withCredentials: true,
+        });
 
-        if (exp <= now) {
-          logout();
-        } else {
-          setUser(JSON.parse(savedUser));
-          setToken(savedToken);
-
-          // Auto logout when token expires
-          const timeout = setTimeout(() => {
-            logout();
-          }, exp - now);
-
-          // Clear timeout on unmount
-          return () => clearTimeout(timeout);
+        if (res.data.user) {
+          setUser(res.data.user);
         }
       } catch (err) {
-        console.error("Invalid token:", err.message);
-        logout();
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    checkAuth();
   }, []);
 
-  const isAuthenticated = !!token;
+  const isAuthenticated = !!user;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-white bg-black">
+        <p>Checking authentication...</p>
+      </div>
+    );
+  }
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
