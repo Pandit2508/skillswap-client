@@ -12,6 +12,7 @@ import GoogleRedirect from "./pages/GoogleRedirect";
 import { AuthContext } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import axios from "axios";
+import CreateProfile from "./pages/CreateProfile";
 
 // Ensure credentials (cookies) are sent in all requests
 axios.defaults.withCredentials = true;
@@ -69,6 +70,7 @@ function App() {
             />
           }
         />
+        <Route path="/CreateProfile" element={<CreateProfile />} />
       </Routes>
     </>
   );

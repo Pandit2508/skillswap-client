@@ -1,11 +1,14 @@
-
+import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 
 const Layout = ({ children }) => {
+  const location = useLocation();
+  const hideNavbar = location.pathname.startsWith("/dashboard");
+
   return (
     <>
-      <Navbar />
-      <main className="p-6">{children}</main>
+      {!hideNavbar && <Navbar />}
+      <main className="">{children}</main>
     </>
   );
 };

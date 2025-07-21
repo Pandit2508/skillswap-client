@@ -6,6 +6,10 @@ const API = axios.create({
   withCredentials: true, //  sends cookies with requests
 });
 
+axios.get("http://localhost:5000/api/profile", {
+  withCredentials: true
+})
+
 // Signup user
 export const signupUser = (data) => API.post("/auth/signup", data);
 
