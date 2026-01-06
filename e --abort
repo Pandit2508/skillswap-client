@@ -1,0 +1,14 @@
+*[33m-[m[33m.[m   [33m8264746[m[33m ([m[1;35mrefs/stash[m[33m)[m On (no branch): save untracked pages before abort
+[31m|[m[32m\[m [33m\[m  
+[31m|[m [32m|[m * [33ma61dea8[m untracked files on (no branch): fb7589f Merge branch 'main' of https://github.com/Pandit2508/skillswap-client
+[31m|[m * [33m57e1228[m index on (no branch): fb7589f Merge branch 'main' of https://github.com/Pandit2508/skillswap-client
+[31m|[m[31m/[m  
+*   [33mfb7589f[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/main[m[33m)[m Merge branch 'main' of https://github.com/Pandit2508/skillswap-client
+[34m|[m[35m\[m  
+[34m|[m * [33m473f4e3[m Initial commit
+* [33m9b1ffe2[m Initial commit: React frontend
+* [33mae320d7[m[33m ([m[1;32mmain[m[33m)[m Update frontend auth, dashboard and requests
+* [33m2dc3cb7[m[33m ([m[1;31morigin/master[m[33m)[m after /api/profile works
+* [33med9d4fa[m Add o-auth
+* [33m40766f3[m Save working progress before Tailwind + PostCSS setup
+* [33m5b905f8[m Initialize project using Create React App
