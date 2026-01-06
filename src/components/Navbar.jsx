@@ -73,9 +73,7 @@ const Navbar = () => {
               <Link to="/dashboard" className="hover:text-purple-300">
                 Dashboard
               </Link>
-              <Link to="/add-skill" className="hover:text-purple-300">
-                Add Skill
-              </Link>
+              
               <button
                 onClick={handleLogout}
                 className="bg-red-600 hover:bg-red-700 px-3 py-1 rounded-md font-semibold text-white"
@@ -134,13 +132,7 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
-              <Link
-                to="/add-skill"
-                className="block hover:text-purple-300"
-                onClick={() => setMenuOpen(false)}
-              >
-                Add Skill
-              </Link>
+
               <button
                 onClick={handleLogout}
                 className="block w-full text-left text-red-400 hover:text-red-300"

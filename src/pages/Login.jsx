@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { loginUser } from "../api/auth"; // ✅ use API layer
 import { AuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -15,25 +15,24 @@ export default function Login() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", formData);
-      const { token, user } = res.data;
+  try {
+    const res = await loginUser(formData);
 
-      login(token, user);
-      toast.success("Login successful!");
-       navigate("/dashboard");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+    login(res.data.user); // ONLY set user
+
+    toast.success("Login successful!");
+  } catch (err) {
+    toast.error(err.response?.data?.error || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google"; // Redirect to backend
+    window.location.href = "http://localhost:5000/api/auth/google";
   };
 
   return (
@@ -69,7 +68,10 @@ export default function Login() {
           />
 
           <div className="text-right text-sm">
-            <Link to="/forgot-password" className="text-purple-400 hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-purple-400 hover:underline"
+            >
               Forgot password?
             </Link>
           </div>
@@ -94,12 +96,15 @@ export default function Login() {
 
         <div className="my-4 text-center text-gray-500">or</div>
 
-        {/* Google Login Button */}
         <button
           onClick={handleGoogleLogin}
           className="w-full bg-white text-gray-800 hover:bg-gray-100 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition"
         >
-          <img src="/assets/icons/google.png" alt="Google" className="w-5 h-5" />
+          <img
+            src="/assets/icons/google.png"
+            alt="Google"
+            className="w-5 h-5"
+          />
           Continue with Google
         </button>
 
