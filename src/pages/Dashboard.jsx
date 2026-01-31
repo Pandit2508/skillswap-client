@@ -83,20 +83,29 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold">Discover Profiles</h1>
 
           <div className="flex gap-3">
-            <Button
-              onClick={() => navigate("/create-profile")}
-              className="bg-violet-600 hover:bg-violet-700"
-            >
-              {hasProfile ? "Edit Profile" : "Create Profile"}
-            </Button>
+  <Button
+    onClick={() => navigate("/create-profile")}
+    className="bg-violet-600 hover:bg-violet-700"
+  >
+    {hasProfile ? "Edit Profile" : "Create Profile"}
+  </Button>
 
-            <Button
-              onClick={() => navigate("/requests")}
-              className="bg-indigo-600 hover:bg-indigo-700"
-            >
-              Requests
-            </Button>
-          </div>
+  <Button
+    onClick={() => navigate("/requests")}
+    className="bg-indigo-600 hover:bg-indigo-700"
+  >
+    Requests
+  </Button>
+
+  {/* ⭐ NEW BUTTON */}
+  <Button
+    onClick={() => navigate("/meetings")}
+    className="bg-purple-600 hover:bg-purple-700"
+  >
+    Meetings
+  </Button>
+</div>
+
         </div>
 
         {/* WELCOME */}

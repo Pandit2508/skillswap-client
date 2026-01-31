@@ -21,15 +21,18 @@ const GoogleRedirect = () => {
         const data = await res.json();
 
         if (res.ok && data.user) {
-          login(data.user); //  Fix here
+          login(data.user);
           toast.success("Logged in with Google");
+
+          // ✅ THIS WAS MISSING — REDIRECT AFTER LOGIN
+          navigate("/dashboard", { replace: true });
         } else {
           throw new Error(data.message || "Failed to fetch user data");
         }
       } catch (err) {
         console.error("Google redirect error:", err);
         toast.error("Google login failed");
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
     };
 
@@ -38,7 +41,9 @@ const GoogleRedirect = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <p className="text-lg animate-pulse">Logging you in with Google...</p>
+      <p className="text-lg animate-pulse">
+        Logging you in with Google...
+      </p>
     </div>
   );
 };

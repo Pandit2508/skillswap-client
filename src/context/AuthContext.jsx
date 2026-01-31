@@ -22,16 +22,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* ================= LOGOUT ================= */
-  const logout = async () => {
+  const logout = async (silent = false) => {
     try {
       await axios.post(
         "http://localhost:5000/api/auth/logout",
         {},
         { withCredentials: true }
       );
-      toast.success("Logged out");
+
+      if (!silent) {
+        toast.success("Logged out");
+      }
     } catch (err) {
-      toast.error("Logout failed");
+      if (!silent) {
+        toast.error("Logout failed");
+      }
     } finally {
       setUser(null);
     }
@@ -56,7 +61,13 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
         }
       } catch (err) {
-        if (isMounted) {
+        if (!isMounted) return;
+
+        // 🔥 HANDLE EXPIRED / INVALID JWT
+        if (err.response?.status === 401) {
+          setUser(null);
+        } else {
+          console.error("Auth check failed:", err);
           setUser(null);
         }
       } finally {

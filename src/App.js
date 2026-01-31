@@ -12,6 +12,8 @@ import CreateProfile from "./pages/CreateProfile";
 import IncomingRequests from "./pages/IncomingRequests";
 import { AuthContext } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
+import UpcomingMeetings from "./pages/UpcomingMeetings";
+
 
 /* ================= PRIVATE ROUTE ================= */
 const PrivateRoute = ({ children }) => {
@@ -97,7 +99,10 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/meetings" element={<UpcomingMeetings />} />
       </Routes>
+
+      
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   getIncomingRequests,
   acceptMatchRequest,
@@ -10,6 +11,9 @@ const IncomingRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [meetingWindow, setMeetingWindow] = useState(null);
+
+  const navigate = useNavigate();
 
   /* ================= FETCH REQUESTS ================= */
   useEffect(() => {
@@ -28,13 +32,69 @@ const IncomingRequests = () => {
     fetchRequests();
   }, []);
 
+  /* ================= TIME CHECK ================= */
+  const canOpenMeeting = (start, end) => {
+    const now = new Date();
+    return now >= start && now <= end;
+  };
+
+  /* ================= GET NEXT DATE FOR DAY ================= */
+  const getNextDateForDay = (dayName) => {
+    const days = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ];
+
+    const today = new Date();
+    const targetDay = days.indexOf(dayName.toLowerCase());
+
+    let diff = targetDay - today.getDay();
+    if (diff < 0) diff += 7;
+
+    const nextDate = new Date(today);
+    nextDate.setDate(today.getDate() + diff);
+
+    return nextDate.toDateString();
+  };
+
   /* ================= ACTION HANDLERS ================= */
-  const handleAccept = async (id) => {
+  const handleAccept = async (req) => {
     try {
-      await acceptMatchRequest(id);
-      setRequests((prev) => prev.filter((r) => r.requestId !== id));
-    } catch {
-      alert("Failed to accept request");
+      const res = await acceptMatchRequest(req.requestId);
+
+      const meetingLink = res?.data?.meetingLink;
+      const slot = res?.data?.slot;
+
+      if (!meetingLink || !slot) {
+        alert(res?.response?.data?.error || "Meeting not scheduled");
+        return;
+      }
+
+      const meetingDate = getNextDateForDay(slot.day);
+
+      const start = new Date(`${meetingDate} ${slot.start_time}`);
+      const end = new Date(`${meetingDate} ${slot.end_time}`);
+
+      setMeetingWindow({
+        link: meetingLink,
+        start,
+        end,
+      });
+
+      setRequests((prev) =>
+        prev.filter((r) => r.requestId !== req.requestId)
+      );
+
+      alert("Meeting scheduled successfully!");
+      navigate("/meetings");
+
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to accept request");
     }
   };
 
@@ -67,9 +127,17 @@ const IncomingRequests = () => {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white py-10 px-6">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">
+        <h1 className="text-3xl font-bold mb-4">
           Incoming Match Requests
         </h1>
+
+        {/* ⭐ View Meetings Button */}
+        <Button
+          className="mb-6 bg-purple-600 hover:bg-purple-700"
+          onClick={() => navigate("/meetings")}
+        >
+          View Upcoming Meetings
+        </Button>
 
         {requests.length === 0 ? (
           <p className="text-gray-400">
@@ -132,24 +200,6 @@ const IncomingRequests = () => {
                       {sender.experience || "Not specified"}
                     </p>
 
-                    <p>
-                      <span className="font-medium text-gray-200">
-                        Skills Offered:
-                      </span>{" "}
-                      {sender.skills?.length
-                        ? sender.skills.join(", ")
-                        : "Not specified"}
-                    </p>
-
-                    <p>
-                      <span className="font-medium text-gray-200">
-                        Wants to Learn:
-                      </span>{" "}
-                      {sender.skills_wanted?.length
-                        ? sender.skills_wanted.join(", ")
-                        : "Not specified"}
-                    </p>
-
                     {/* AVAILABILITY */}
                     <div>
                       <span className="font-medium text-gray-200">
@@ -175,7 +225,7 @@ const IncomingRequests = () => {
                   <div className="flex gap-4 mt-6">
                     <Button
                       className="bg-emerald-600 hover:bg-emerald-700"
-                      onClick={() => handleAccept(req.requestId)}
+                      onClick={() => handleAccept(req)}
                     >
                       Accept
                     </Button>
@@ -192,10 +242,32 @@ const IncomingRequests = () => {
             })}
           </div>
         )}
+
+        {/* JOIN MEETING BUTTON */}
+        {meetingWindow && (
+          <div className="mt-10 text-center">
+            <Button
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => {
+                if (
+                  canOpenMeeting(
+                    meetingWindow.start,
+                    meetingWindow.end
+                  )
+                ) {
+                  window.open(meetingWindow.link, "_blank");
+                } else {
+                  alert("Meeting is not active right now.");
+                }
+              }}
+            >
+              Join Scheduled Meeting
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default IncomingRequests;
-
