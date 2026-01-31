@@ -1,70 +1,49 @@
-# Getting Started with Create React App
+SkillSwap Frontend
+This is the frontend of SkillSwap, a skill-barter platform where users can connect, match based on skills, and schedule meetings to exchange knowledge.
+The frontend is built using React and provides an interactive interface for users to manage their profiles, send match requests, and join scheduled video meetings.
+________________________________________
+What this frontend does
+•	User registration and login
+•	Profile creation and editing
+•	Display other users' profiles
+•	Send and receive match requests
+•	Accept or reject requests
+•	View upcoming meetings
+•	Countdown timer for scheduled meetings
+•	Join video calls directly from the dashboard
+•	Clean dark-themed UI for better user experience
+________________________________________
+Tech Stack
+•	React.js
+•	React Router
+•	Tailwind CSS
+•	Axios
+•	Framer Motion (for animations)
+________________________________________
+Main Features
+Authentication UI
+Users can sign up and log in securely. Sessions are handled through cookies managed by the backend.
+Dashboard
+After login, users can:
+•	View their own profile
+•	Browse other users
+•	Search and filter profiles
+•	Send match requests
+Profile Management
+Users can:
+•	Add skills offered
+•	Add skills they want to learn
+•	Set multiple availability slots
+•	Update experience and location
+Match Requests
+Users can:
+•	View incoming requests
+•	Accept or reject matches
+•	Automatically schedule meetings when availability overlaps
+Upcoming Meetings
+Users can:
+•	View scheduled meetings
+•	See countdown timers
+•	Join meetings only during the allowed time
+•	Access Jitsi video call links
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
