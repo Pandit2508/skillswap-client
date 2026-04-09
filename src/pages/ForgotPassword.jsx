@@ -12,11 +12,7 @@ const ForgotPassword = () => {
     try {
       
 
-await axios.post(
-  `${BASE_URL}/auth/forgot-password`,
-  { email },
-  { withCredentials: true }
-);
+await axios.post(`${BASE_URL}/auth/forgot-password`, { email });
       toast.success("Reset link sent! Check your inbox.");
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong");
