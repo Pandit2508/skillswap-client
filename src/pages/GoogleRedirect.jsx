@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
 const GoogleRedirect = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -14,9 +16,11 @@ const GoogleRedirect = () => {
 
     const fetchUserFromCookie = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/auth/me", {
-          credentials: "include",
-        });
+        
+
+const res = await fetch(`${BASE_URL}/auth/me`, {
+  credentials: "include",
+});
 
         const data = await res.json();
 

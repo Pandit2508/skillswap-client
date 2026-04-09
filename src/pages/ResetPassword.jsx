@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+
 const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -19,9 +21,13 @@ const ResetPassword = () => {
 
     try {
       setLoading(true);
-      await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, {
-        newPassword: password,
-      });
+      await axios.post(
+  `${BASE_URL}/auth/reset-password/${token}`,
+  {
+    newPassword: password,
+  },
+  { withCredentials: true }
+);
 
       toast.success("Password reset successful!");
       navigate("/login");

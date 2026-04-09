@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
 export const AuthContext = createContext(null);
 
@@ -25,10 +26,10 @@ export const AuthProvider = ({ children }) => {
   const logout = async (silent = false) => {
     try {
       await axios.post(
-        "http://localhost:5000/api/auth/logout",
-        {},
-        { withCredentials: true }
-      );
+  `${BASE_URL}/auth/logout`,
+  {},
+  { withCredentials: true }
+);
 
       if (!silent) {
         toast.success("Logged out");
@@ -49,9 +50,9 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/auth/me",
-          { withCredentials: true }
-        );
+  `${BASE_URL}/auth/me`,
+  { withCredentials: true }
+);
 
         if (!isMounted) return;
 

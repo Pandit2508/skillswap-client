@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -9,7 +10,13 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/auth/forgot-password", { email });
+      
+
+await axios.post(
+  `${BASE_URL}/auth/forgot-password`,
+  { email },
+  { withCredentials: true }
+);
       toast.success("Reset link sent! Check your inbox.");
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong");
