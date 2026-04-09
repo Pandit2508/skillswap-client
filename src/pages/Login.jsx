@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../api/auth"; // ✅ use API layer
+import { loginUser } from "../api/auth";
 import { AuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -8,28 +8,32 @@ import { motion } from "framer-motion";
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const { login } = useContext(AuthContext);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const res = await loginUser(formData);
+    try {
+      const res = await loginUser(formData);
 
-    login(res.data.user); // ONLY set user
+      login(res.data.user);
 
-    toast.success("Login successful!");
-  } catch (err) {
-    toast.error(err.response?.data?.error || "Login failed");
-  } finally {
-    setLoading(false);
-  }
-};
+      toast.success("Login successful!");
+
+      
+      navigate("/dashboard");
+
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = () => {
     window.location.href = "http://localhost:5000/api/auth/google";
@@ -57,6 +61,7 @@ export default function Login() {
             required
             className="w-full p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
+
           <input
             name="password"
             type="password"

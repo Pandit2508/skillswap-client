@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { useNavigate } from "react-router-dom";
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -33,6 +34,8 @@ const sections = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     AOS.init({ duration: 1000 });
   }, []);
@@ -52,16 +55,22 @@ const Home = () => {
           <div className="text-sm uppercase tracking-widest font-bold text-purple-400 mb-3 text-lg">
             Share what you know, learn what you love
           </div>
+
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
             Welcome to <span className="text-purple-500">SkillSwap</span>
           </h1>
+
           <p className="mt-6 text-lg text-gray-300 max-w-2xl mx-auto">
             A decentralized platform to barter skills, learn, and grow together —
             <br />
             <em className="text-purple-300">no money involved, just mutual growth.</em>
           </p>
+
           <div className="mt-8">
-            <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition">
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition"
+            >
               Get Started
             </button>
           </div>
@@ -71,6 +80,7 @@ const Home = () => {
       {/* Stacked Sections */}
       {sections.map((section, idx) => {
         const isAbout = idx === 1;
+
         return (
           <section
             key={idx}
@@ -87,13 +97,24 @@ const Home = () => {
                 className="rounded-2xl shadow-2xl object-cover w-full h-80 md:h-[400px]"
               />
             </div>
+
             <div className="md:w-1/2 text-white">
               <div className="uppercase text-sm text-gray-400 font-medium mb-2">
                 {section.subtitle}
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">{section.title}</h2>
-              <p className="text-gray-300 text-lg mb-6">{section.description}</p>
-              <button className="bg-purple-600 hover:bg-purple-700 px-5 py-2 rounded-xl font-medium">
+
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                {section.title}
+              </h2>
+
+              <p className="text-gray-300 text-lg mb-6">
+                {section.description}
+              </p>
+
+              <button
+                onClick={() => navigate("/login")}
+                className="bg-purple-600 hover:bg-purple-700 px-5 py-2 rounded-xl font-medium"
+              >
                 {section.button}
               </button>
             </div>
@@ -104,15 +125,21 @@ const Home = () => {
       {/* FAQ Section */}
       <section className="bg-zinc-900 text-white py-20 px-6" data-aos="fade-up">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Get started with <br className="hidden md:block" /> skill swapping
             </h2>
+
             <p className="text-gray-400 mb-6 text-lg">
               Curious about how to begin your skill exchange journey? We've compiled the top
               questions to help you dive into our community with ease and enthusiasm.
             </p>
-            <button className="bg-purple-500 hover:bg-purple-600 px-6 py-2 rounded-full font-semibold transition duration-200">
+
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-purple-500 hover:bg-purple-600 px-6 py-2 rounded-full font-semibold transition duration-200"
+            >
               Join us
             </button>
           </div>
@@ -147,13 +174,12 @@ const Home = () => {
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      
-    <Footer />
+      <Footer />
     </div>
-    
   );
 };
 

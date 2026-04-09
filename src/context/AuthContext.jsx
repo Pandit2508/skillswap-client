@@ -63,7 +63,6 @@ export const AuthProvider = ({ children }) => {
       } catch (err) {
         if (!isMounted) return;
 
-        // 🔥 HANDLE EXPIRED / INVALID JWT
         if (err.response?.status === 401) {
           setUser(null);
         } else {
