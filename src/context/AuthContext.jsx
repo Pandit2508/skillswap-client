@@ -62,15 +62,15 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
         }
       } catch (err) {
-        if (!isMounted) return;
+  if (!isMounted) return;
 
-        if (err.response?.status === 401) {
-          setUser(null);
-        } else {
-          console.error("Auth check failed:", err);
-          setUser(null);
-        }
-      } finally {
+  if (err?.response?.status === 401) {
+    setUser(null);
+  } else {
+    console.error("Auth check failed:", err?.message || err);
+    setUser(null);
+  }
+} finally {
         if (isMounted) {
           setLoading(false);
         }
