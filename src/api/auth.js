@@ -6,7 +6,7 @@ const BASE_URL =
 
 /* ================= AXIOS INSTANCE ================= */
 const API = axios.create({
-  baseURL: `${BASE_URL}`,
+  baseURL: BASE_URL,
   withCredentials: true, // 
 });
 
