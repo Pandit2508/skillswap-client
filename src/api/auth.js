@@ -1,8 +1,13 @@
 import axios from "axios";
 
+/* ================= BASE URL ================= */
+const BASE_URL =
+  process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+
+/* ================= AXIOS INSTANCE ================= */
 const API = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL || "http://localhost:5000/api",
-  withCredentials: true, // 🔒 important for cookies/JWT
+  baseURL: `${BASE_URL}/api`,
+  withCredentials: true, // 
 });
 
 /* ================= AUTH ================= */
@@ -18,26 +23,18 @@ export const getProfile = () => API.get("/profile");
 /* ================= USER DISCOVERY ================= */
 export const getUsers = (search = "", filter = "all") =>
   API.get("/users", {
-    params: {
-      search,
-      filter,
-    },
+    params: { search, filter },
   });
 
 /* ================= MATCH REQUESTS ================= */
-
-// Send match request
 export const sendMatchRequest = (receiver_id) =>
   API.post("/match-requests", { receiver_id });
 
-// 🔹 Get incoming match requests
 export const getIncomingRequests = () =>
   API.get("/match-requests/incoming");
 
-// 🔹 Accept match request
 export const acceptMatchRequest = (requestId) =>
   API.post(`/match-requests/${requestId}/accept`);
 
-// 🔹 Reject match request
 export const rejectMatchRequest = (requestId) =>
   API.post(`/match-requests/${requestId}/reject`);
