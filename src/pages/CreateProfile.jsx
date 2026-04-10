@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
-import { getProfile } from "../api/auth";
+import API, { getProfile } from "../api/auth";
 
 const CreateProfile = () => {
   const navigate = useNavigate();
@@ -80,22 +80,13 @@ const CreateProfile = () => {
     };
 
     try {
-      const res = await fetch("/api/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
+      await API.post("/profile", payload);
 
-      if (res.ok) {
-        alert(isEdit ? "Profile updated!" : "Profile created!");
-        navigate("/dashboard", { replace: true });
-      } else {
-        const err = await res.json();
-        alert(err.error || "Something went wrong");
-      }
+      alert(isEdit ? "Profile updated!" : "Profile created!");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
-      alert("Server error");
+      console.error("Profile save error:", err);
+      alert(err.response?.data?.error || "Server error");
     }
   };
 
