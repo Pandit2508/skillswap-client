@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
-import API from "../api"; // your axios instance
+import API from "../api/auth"; // your axios instance
 
 const GoogleRedirect = () => {
   const navigate = useNavigate();
