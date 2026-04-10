@@ -21,7 +21,14 @@ API.interceptors.response.use(
     // Routes where redirect should NOT happen
     const ignoredRoutes = ["/login", "/signup"];
 
-    if (status === 401 && !ignoredRoutes.includes(currentPath)) {
+    // 🔥 Also ignore auth-check endpoint
+    const isAuthCheck = error.config?.url?.includes("/auth/me");
+
+    if (
+      status === 401 &&
+      !ignoredRoutes.includes(currentPath) &&
+      !isAuthCheck
+    ) {
       console.error("Unauthorized - redirecting to login");
 
       window.location.href = "/login";
