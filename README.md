@@ -96,11 +96,10 @@ src/
 │── index.js
 
 
-
+---
 ## ⚙️ Setup Instructions
 
 ### 1. Clone the repository
-```bash
 git clone https://github.com/your-username/skillswap-frontend.git
 cd skillswap-frontend
 2. Install dependencies
@@ -112,6 +111,8 @@ Create a .env file in the root directory:
 REACT_APP_BACKEND_URL=https://skillswap-server-1-hn4n.onrender.com/api
 4. Run the application
 npm start
+
+---
 ⚠️ Notes
 Backend is deployed on Render
 Authentication uses cookie-based JWT
@@ -130,3 +131,4 @@ GitHub: https://github.com/Pandit2508
 🧾 License
 
 This project is licensed under the MIT License.
+```
