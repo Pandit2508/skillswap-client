@@ -6,10 +6,8 @@ const UpcomingMeetings = () => {
   const [meetings, setMeetings] = useState([]);
 
   useEffect(() => {
-    fetchMeetings();
-    const timer = setInterval(fetchMeetings, 5000); // 🔥 reduced spam
-    return () => clearInterval(timer);
-  }, []);
+  fetchMeetings();
+}, []);
 
   const fetchMeetings = async () => {
     try {
@@ -17,7 +15,7 @@ const UpcomingMeetings = () => {
 
       console.log("MEETINGS RESPONSE:", res.data);
 
-      // 🔥 handle different response shapes
+      //  handle different response shapes
       const data = Array.isArray(res.data)
         ? res.data
         : res.data.meetings || [];
