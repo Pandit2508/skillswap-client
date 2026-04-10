@@ -112,9 +112,6 @@ Create a .env file in the root directory:
 REACT_APP_BACKEND_URL=https://skillswap-server-1-hn4n.onrender.com/api
 4. Run the application
 npm start
-
----
-
 ⚠️ Notes
 Backend is deployed on Render
 Authentication uses cookie-based JWT
@@ -127,7 +124,6 @@ Enhanced matching algorithm
 Better mobile responsiveness
 👨‍💻 Author
 
----
 Naman Pandit
 GitHub: https://github.com/Pandit2508
 
