@@ -14,13 +14,27 @@ const GoogleRedirect = () => {
     if (hasHandled.current) return;
     hasHandled.current = true;
 
-    const fetchUserFromCookie = async () => {
+    const handleGoogleLogin = async () => {
       try {
-        
+        // 🔥 STEP 1: Get token from URL
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
 
-const res = await fetch(`${BASE_URL}/auth/me`, {
-  credentials: "include",
-});
+        console.log("TOKEN FROM URL:", token);
+
+        if (!token) {
+          throw new Error("No token received from Google");
+        }
+
+        // 🔥 STEP 2: Store token
+        localStorage.setItem("token", token);
+
+        // 🔥 STEP 3: Fetch user using token
+        const res = await fetch(`${BASE_URL}/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         const data = await res.json();
 
@@ -28,19 +42,23 @@ const res = await fetch(`${BASE_URL}/auth/me`, {
           login(data.user);
           toast.success("Logged in with Google");
 
-          // ✅ THIS WAS MISSING — REDIRECT AFTER LOGIN
+          // 🔥 IMPORTANT: navigate AFTER everything is set
           navigate("/dashboard", { replace: true });
         } else {
-          throw new Error(data.message || "Failed to fetch user data");
+          throw new Error(data.message || "Failed to fetch user");
         }
       } catch (err) {
         console.error("Google redirect error:", err);
         toast.error("Google login failed");
+
+        // clean up broken token if any
+        localStorage.removeItem("token");
+
         navigate("/login", { replace: true });
       }
     };
 
-    fetchUserFromCookie();
+    handleGoogleLogin();
   }, [login, navigate]);
 
   return (
