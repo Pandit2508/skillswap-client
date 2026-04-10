@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Button from "../components/ui/Button";
-import axios from "axios";
+import API from "../api/auth";
 
 const UpcomingMeetings = () => {
   const [meetings, setMeetings] = useState([]);
@@ -13,9 +13,7 @@ const UpcomingMeetings = () => {
 
   const fetchMeetings = async () => {
     try {
-      const res = await axios.get("/api/bookings/my-meetings", {
-        withCredentials: true,
-      });
+      const res = await API.get("/bookings/my-meetings");
 
       console.log("MEETINGS RESPONSE:", res.data);
 
