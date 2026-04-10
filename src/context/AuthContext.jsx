@@ -8,16 +8,35 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(undefined);
   const [loading, setLoading] = useState(true);
 
+  /* ================= FETCH USER ================= */
+  const fetchUser = async () => {
+    try {
+      const res = await API.get("/auth/me");
+
+      if (res.data?.user) {
+        setUser(res.data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        setUser(null);
+      } else {
+        console.error("Auth check failed:", err?.message || err);
+        setUser(null);
+      }
+    }
+  };
+
   /* ================= LOGIN ================= */
-  const login = (userData) => {
-    if (!userData) return;
-    setUser(userData);
+  const login = async () => {
+    await fetchUser(); // 🔥 always sync with backend
   };
 
   /* ================= LOGOUT ================= */
   const logout = async (silent = false) => {
     try {
-      await API.post("/auth/logout"); // 🔥 clear cookie on backend
+      await API.post("/auth/logout");
 
       if (!silent) {
         toast.success("Logged out");
@@ -31,39 +50,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /* ================= AUTH CHECK ================= */
+  /* ================= INITIAL AUTH CHECK ================= */
   useEffect(() => {
     let isMounted = true;
 
-    const checkAuth = async () => {
-      try {
-        // 🔥 Just call backend, cookie will be sent automatically
-        const res = await API.get("/auth/me");
+    const initAuth = async () => {
+      await fetchUser();
 
-        if (!isMounted) return;
-
-        if (res.data?.user) {
-          setUser(res.data.user);
-        } else {
-          setUser(null);
-        }
-      } catch (err) {
-        if (!isMounted) return;
-
-        if (err?.response?.status === 401) {
-          setUser(null);
-        } else {
-          console.error("Auth check failed:", err?.message || err);
-          setUser(null);
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+      if (isMounted) {
+        setLoading(false);
       }
     };
 
-    checkAuth();
+    initAuth();
 
     return () => {
       isMounted = false;
@@ -86,6 +85,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         logout,
+        refreshUser: fetchUser, // 🔥 bonus utility
       }}
     >
       {children}
