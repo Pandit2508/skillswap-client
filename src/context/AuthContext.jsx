@@ -1,8 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
-
-const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+import API from "../api"; // 🔥 use your axios instance (withCredentials enabled)
 
 export const AuthContext = createContext(null);
 
@@ -19,8 +17,7 @@ export const AuthProvider = ({ children }) => {
   /* ================= LOGOUT ================= */
   const logout = async (silent = false) => {
     try {
-      // 🔥 remove token (important now)
-      localStorage.removeItem("token");
+      await API.post("/auth/logout"); // 🔥 clear cookie on backend
 
       if (!silent) {
         toast.success("Logged out");
@@ -40,22 +37,8 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-        // 🔥 NO TOKEN → skip request
-        if (!token) {
-          if (isMounted) {
-            setUser(null);
-            setLoading(false);
-          }
-          return;
-        }
-
-        const res = await axios.get(`${BASE_URL}/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // 🔥 Just call backend, cookie will be sent automatically
+        const res = await API.get("/auth/me");
 
         if (!isMounted) return;
 
@@ -68,8 +51,6 @@ export const AuthProvider = ({ children }) => {
         if (!isMounted) return;
 
         if (err?.response?.status === 401) {
-          // 🔥 token invalid → remove it
-          localStorage.removeItem("token");
           setUser(null);
         } else {
           console.error("Auth check failed:", err?.message || err);

@@ -2,8 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
-
-const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+import API from "../api"; // your axios instance
 
 const GoogleRedirect = () => {
   const navigate = useNavigate();
@@ -16,43 +15,20 @@ const GoogleRedirect = () => {
 
     const handleGoogleLogin = async () => {
       try {
-        // 🔥 STEP 1: Get token from URL
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get("token");
+        // 🔥 Just call backend to get user (cookie is already set)
+        const res = await API.get("/auth/me");
 
-        console.log("TOKEN FROM URL:", token);
-
-        if (!token) {
-          throw new Error("No token received from Google");
-        }
-
-        // 🔥 STEP 2: Store token
-        localStorage.setItem("token", token);
-
-        // 🔥 STEP 3: Fetch user using token
-        const res = await fetch(`${BASE_URL}/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        if (res.ok && data.user) {
-          login(data.user);
+        if (res.data?.user) {
+          login(res.data.user);
           toast.success("Logged in with Google");
 
-          // 🔥 IMPORTANT: navigate AFTER everything is set
           navigate("/dashboard", { replace: true });
         } else {
-          throw new Error(data.message || "Failed to fetch user");
+          throw new Error("Failed to fetch user");
         }
       } catch (err) {
         console.error("Google redirect error:", err);
         toast.error("Google login failed");
-
-        // clean up broken token if any
-        localStorage.removeItem("token");
 
         navigate("/login", { replace: true });
       }

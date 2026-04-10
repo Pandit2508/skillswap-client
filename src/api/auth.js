@@ -8,30 +8,22 @@ const BASE_URL =
 /* ================= AXIOS INSTANCE ================= */
 const API = axios.create({
   baseURL: BASE_URL,
-});
-
-/* ================= REQUEST INTERCEPTOR ================= */
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
+  withCredentials: true, // 🔥 REQUIRED for cookies
 });
 
 /* ================= RESPONSE INTERCEPTOR ================= */
 API.interceptors.response.use(
   (response) => response,
   (error) => {
-    // 🔥 Auto logout if token invalid/expired
-    if (error.response?.status === 401) {
-      console.error("🔐 Unauthorized - logging out");
+    const status = error.response?.status;
+    const currentPath = window.location.pathname;
 
-      localStorage.removeItem("token");
+    // Routes where redirect should NOT happen
+    const ignoredRoutes = ["/login", "/signup"];
 
-      // optional: redirect to login
+    if (status === 401 && !ignoredRoutes.includes(currentPath)) {
+      console.error("Unauthorized - redirecting to login");
+
       window.location.href = "/login";
     }
 
@@ -41,15 +33,16 @@ API.interceptors.response.use(
 
 /* ================= AUTH ================= */
 export const signupUser = (data) => API.post("/auth/signup", data);
+
 export const loginUser = (data) => API.post("/auth/login", data);
-export const logoutUser = () => {
-  localStorage.removeItem("token"); // 🔥 important now
-  return Promise.resolve();
-};
+
+export const logoutUser = () => API.post("/auth/logout");
+
 export const getMe = () => API.get("/auth/me");
 
 /* ================= PROFILE ================= */
 export const createProfile = (data) => API.post("/profile", data);
+
 export const getProfile = () => API.get("/profile");
 
 /* ================= USER DISCOVERY ================= */
@@ -70,3 +63,5 @@ export const acceptMatchRequest = (requestId) =>
 
 export const rejectMatchRequest = (requestId) =>
   API.post(`/match-requests/${requestId}/reject`);
+
+export default API;
