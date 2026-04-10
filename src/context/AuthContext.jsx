@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import API from "../api"; // 🔥 use your axios instance (withCredentials enabled)
+import API from "../api/auth";
 
 export const AuthContext = createContext(null);
 
