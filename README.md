@@ -96,7 +96,6 @@ src/
 │── index.js
 
 
----
 
 ## ⚙️ Setup Instructions
 
