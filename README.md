@@ -96,7 +96,6 @@ src/
 │── index.js
 
 
----
 ## ⚙️ Setup Instructions
 
 ### 1. Clone the repository
@@ -118,17 +117,18 @@ Backend is deployed on Render
 Authentication uses cookie-based JWT
 Works best in standard browser mode
 (Incognito may block cookies due to cross-site policies)
+---
 💡 Future Improvements
 Real-time chat between users
 Notifications system
 Enhanced matching algorithm
 Better mobile responsiveness
+---
 👨‍💻 Author
-
 Naman Pandit
 GitHub: https://github.com/Pandit2508
+---
 
 🧾 License
-
 This project is licensed under the MIT License.
 ```
