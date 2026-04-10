@@ -99,19 +99,23 @@ export default function Login() {
           </button>
         </form>
 
-        {/* <div className="my-4 text-center text-gray-500">or</div> */}
+        {process.env.REACT_APP_ENABLE_GOOGLE_AUTH === "true" && (
+  <>
+    <div className="my-4 text-center text-gray-500">or</div>
 
-        {/* <button
-          onClick={handleGoogleLogin}
-          className="w-full bg-white text-gray-800 hover:bg-gray-100 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition"
-        >
-          <img
-            src="/assets/icons/google.png"
-            alt="Google"
-            className="w-5 h-5"
-          />
-          Continue with Google
-        </button> */}
+    <button
+      onClick={handleGoogleLogin}
+      className="w-full bg-white text-gray-800 hover:bg-gray-100 py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition"
+    >
+      <img
+        src="/assets/icons/google.png"
+        alt="Google"
+        className="w-5 h-5"
+      />
+      Continue with Google
+    </button>
+  </>
+)}
 
         <div className="text-center text-sm mt-6">
           Don't have an account?{" "}
