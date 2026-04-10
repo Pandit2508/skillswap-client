@@ -8,7 +8,7 @@ const BASE_URL =
 /* ================= AXIOS INSTANCE ================= */
 const API = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // 🔥 REQUIRED for cookies
+  withCredentials: true,
 });
 
 /* ================= RESPONSE INTERCEPTOR ================= */
@@ -18,10 +18,7 @@ API.interceptors.response.use(
     const status = error.response?.status;
     const currentPath = window.location.pathname;
 
-    // Routes where redirect should NOT happen
     const ignoredRoutes = ["/login", "/signup"];
-
-    // 🔥 Also ignore auth-check endpoint
     const isAuthCheck = error.config?.url?.includes("/auth/me");
 
     if (
@@ -30,7 +27,6 @@ API.interceptors.response.use(
       !isAuthCheck
     ) {
       console.error("Unauthorized - redirecting to login");
-
       window.location.href = "/login";
     }
 
@@ -40,16 +36,12 @@ API.interceptors.response.use(
 
 /* ================= AUTH ================= */
 export const signupUser = (data) => API.post("/auth/signup", data);
-
 export const loginUser = (data) => API.post("/auth/login", data);
-
 export const logoutUser = () => API.post("/auth/logout");
-
 export const getMe = () => API.get("/auth/me");
 
 /* ================= PROFILE ================= */
 export const createProfile = (data) => API.post("/profile", data);
-
 export const getProfile = () => API.get("/profile");
 
 /* ================= USER DISCOVERY ================= */
@@ -59,9 +51,12 @@ export const getUsers = (search = "", filter = "all") =>
   });
 
 /* ================= MATCH REQUESTS ================= */
-export const sendMatchRequest = (receiver_id) =>
-  API.post("/match-requests", { receiver_id });
 
+/* 🔥 FIXED HERE */
+export const sendMatchRequest = (receiverId) =>
+  API.post(`/match-requests/${receiverId}`);
+
+/* ================= OTHER ACTIONS ================= */
 export const getIncomingRequests = () =>
   API.get("/match-requests/incoming");
 
