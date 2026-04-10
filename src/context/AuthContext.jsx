@@ -9,29 +9,41 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   /* ================= FETCH USER ================= */
-  const fetchUser = async () => {
-    try {
-      const res = await API.get("/auth/me");
+const fetchUser = async () => {
+  try {
+    const res = await API.get("/auth/me");
 
-      if (res.data?.user) {
-        setUser(res.data.user);
-      } else {
-        setUser(null);
-      }
-    } catch (err) {
-      if (err?.response?.status === 401) {
-        setUser(null);
-      } else {
-        console.error("Auth check failed:", err?.message || err);
-        setUser(null);
-      }
+    if (res.data?.user) {
+      setUser(res.data.user);
+      return true;
+    } else {
+      setUser(null);
+      return false;
     }
-  };
+  } catch (err) {
+    if (err?.response?.status === 401) {
+      setUser(null);
+    } else {
+      console.error("Auth check failed:", err?.message || err);
+      setUser(null);
+    }
+    return false;
+  }
+};
 
-  /* ================= LOGIN ================= */
-  const login = async () => {
-    await fetchUser(); // 🔥 always sync with backend
-  };
+/* ================= LOGIN ================= */
+const login = async () => {
+  // 🔥 give cookie + backend some time to breathe
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  let success = await fetchUser();
+
+  // 🔥 retry once if Render had a moment
+  if (!success) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    await fetchUser();
+  }
+};
 
   /* ================= LOGOUT ================= */
   const logout = async (silent = false) => {
