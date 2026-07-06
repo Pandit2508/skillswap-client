@@ -78,27 +78,40 @@ src/
 └── index.js
 
 ⚙️ Setup Instructions
+
 1. Clone the repository
-git clone https://github.com/your-username/skillswap-frontend.git
-cd skillswap-frontend
+```bash
+git clone https://github.com/Pandit2508/skillswap-client.git
+cd skillswap-client
+```
+
 2. Install dependencies
+```bash
 npm install
+```
+
 3. Configure environment variables
 
-Create a .env file in the root directory:
+Copy `.env.example` to `.env` and adjust as needed:
+```bash
+cp .env.example .env
+```
 
-REACT_APP_BACKEND_URL=https://skillswap-server-1-hn4n.onrender.com/api
 4. Run the application
+```bash
 npm start
+```
+
 ⚠️ Notes
-Backend is deployed on Render
-Uses HTTP-only cookie authentication
-Incognito mode may block cookies due to browser policies
+- Backend is deployed on Render
+- Uses HTTP-only cookie authentication
+- Incognito mode may block cookies due to browser policies
+
 💡 Future Improvements
-Real-time chat
-Notifications system
-Improved matching algorithm
-Better mobile responsiveness
+- Real-time chat
+- Notifications system
+- Improved matching algorithm (weighted scoring, not just first overlap)
+- Better mobile responsiveness
 👨‍💻 Author
 
 Naman Pandit
