@@ -8,6 +8,7 @@ This repository contains the **frontend application**, built with React, providi
 
 ## 🌐 Live Demo
 👉 https://skillswap-client-yv4s.vercel.app
+tested on Chrome
 
 ---
 
