@@ -104,6 +104,13 @@ const Dashboard = () => {
   >
     Meetings
   </Button>
+
+  <Button
+    onClick={() => navigate("/reviews")}
+    className="bg-pink-600 hover:bg-pink-700"
+  >
+    Reviews
+  </Button>
 </div>
 
         </div>

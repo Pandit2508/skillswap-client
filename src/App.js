@@ -10,9 +10,11 @@ import ResetPassword from "./pages/ResetPassword";
 import GoogleRedirect from "./pages/GoogleRedirect";
 import CreateProfile from "./pages/CreateProfile";
 import IncomingRequests from "./pages/IncomingRequests";
+import Reviews from "./pages/Reviews";
 import { AuthContext } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import UpcomingMeetings from "./pages/UpcomingMeetings";
+import { useSocketNotifications } from "./hooks/useSocketNotifications";
 
 
 /* ================= PRIVATE ROUTE ================= */
@@ -33,6 +35,9 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
   const { user, loading } = useContext(AuthContext);
+
+  // Connects once `user` is populated; safely no-ops before then.
+  useSocketNotifications();
 
   // ⏳ Prevent routing before auth check
   if (loading) {
@@ -100,6 +105,15 @@ function App() {
           }
         />
         <Route path="/meetings" element={<UpcomingMeetings />} />
+
+        <Route
+          path="/reviews"
+          element={
+            <PrivateRoute>
+              <Reviews />
+            </PrivateRoute>
+          }
+        />
       </Routes>
 
       

@@ -66,4 +66,13 @@ export const acceptMatchRequest = (requestId) =>
 export const rejectMatchRequest = (requestId) =>
   API.post(`/match-requests/${requestId}/reject`);
 
+/* ================= REVIEWS ================= */
+export const getEligibleReviews = () => API.get("/reviews/eligible");
+
+export const submitReview = (bookingId, rating, comment) =>
+  API.post(`/reviews/${bookingId}`, { rating, comment });
+
+export const getUserReviews = (userId) => API.get(`/reviews/user/${userId}`);
+
+export { BASE_URL };
 export default API;
