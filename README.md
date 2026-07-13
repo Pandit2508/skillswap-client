@@ -17,7 +17,9 @@ tested on Chrome
 - 🔐 User authentication (login/signup)
 - 👤 Profile creation and management
 - 🔍 Browse and search users
+- ⚖️ Suggested matches ranked by skill fit, rating, and shared availability
 - 🤝 Send, accept, and reject match requests
+- 💬 Real-time chat with matched users
 - 📅 Schedule and view meetings
 - ⏳ Real-time countdown timers
 - 🎥 Join video calls (Jitsi integration)
@@ -58,6 +60,12 @@ tested on Chrome
 - View incoming requests
 - Accept/reject matches
 - Auto scheduling based on availability
+- Suggested matches ranked by a weighted score (skill fit + rating + shared availability)
+
+### 💬 Messages
+- One-on-one chat with any user you have an accepted match with
+- Real-time delivery + typing indicators over Socket.io
+- Unread counts and last-message preview per conversation
 
 ### 📅 Meetings
 - View scheduled sessions
@@ -109,9 +117,8 @@ npm start
 - Incognito mode may block cookies due to browser policies
 
 💡 Future Improvements
-- Real-time chat
-- Notifications system
-- Improved matching algorithm (weighted scoring, not just first overlap)
+- Notifications system (persistent, beyond toasts)
+- Message pagination / infinite scroll for long threads
 - Better mobile responsiveness
 👨‍💻 Author
 

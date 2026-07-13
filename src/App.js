@@ -11,6 +11,7 @@ import GoogleRedirect from "./pages/GoogleRedirect";
 import CreateProfile from "./pages/CreateProfile";
 import IncomingRequests from "./pages/IncomingRequests";
 import Reviews from "./pages/Reviews";
+import Messages from "./pages/Messages";
 import { AuthContext } from "./context/AuthContext";
 import { Toaster } from "react-hot-toast";
 import UpcomingMeetings from "./pages/UpcomingMeetings";
@@ -111,6 +112,23 @@ function App() {
           element={
             <PrivateRoute>
               <Reviews />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/messages"
+          element={
+            <PrivateRoute>
+              <Messages />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/messages/:userId"
+          element={
+            <PrivateRoute>
+              <Messages />
             </PrivateRoute>
           }
         />

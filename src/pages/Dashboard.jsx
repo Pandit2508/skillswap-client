@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { getProfile, getUsers, sendMatchRequest } from "../api/auth";
+import {
+  getProfile,
+  getUsers,
+  sendMatchRequest,
+  getSuggestedMatches,
+} from "../api/auth";
 import Button from "../components/ui/Button";
 
 const Dashboard = () => {
@@ -10,6 +15,10 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [suggestions, setSuggestions] = useState([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(true);
+  const [suggestionsError, setSuggestionsError] = useState(null);
+  const [sentRequestIds, setSentRequestIds] = useState(new Set());
 
   const navigate = useNavigate();
 
@@ -52,10 +61,36 @@ const Dashboard = () => {
     fetchUsers();
   }, [search, filter, profile]);
 
+  /* ================= LOAD SUGGESTED MATCHES ================= */
+  useEffect(() => {
+    if (!profile?.profile) {
+      setSuggestionsLoading(false);
+      return;
+    }
+
+    const fetchSuggestions = async () => {
+      setSuggestionsLoading(true);
+      setSuggestionsError(null);
+      try {
+        const res = await getSuggestedMatches(6);
+        setSuggestions(res.data || []);
+      } catch (err) {
+        setSuggestionsError(
+          err.response?.data?.error || "Couldn't load suggested matches"
+        );
+      } finally {
+        setSuggestionsLoading(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, [profile]);
+
   /* ================= SEND REQUEST ================= */
   const handleSendRequest = async (receiverId) => {
     try {
       await sendMatchRequest(receiverId);
+      setSentRequestIds((prev) => new Set(prev).add(receiverId));
       alert("Match request sent!");
     } catch (err) {
       alert(err.response?.data?.error || "Network error");
@@ -95,6 +130,13 @@ const Dashboard = () => {
     className="bg-indigo-600 hover:bg-indigo-700"
   >
     Requests
+  </Button>
+
+  <Button
+    onClick={() => navigate("/messages")}
+    className="bg-cyan-600 hover:bg-cyan-700"
+  >
+    Messages
   </Button>
 
  
@@ -184,6 +226,100 @@ const Dashboard = () => {
             >
               Create Profile
             </Button>
+          </div>
+        )}
+
+        {/* SUGGESTED MATCHES (weighted: skill fit + rating + shared availability) */}
+        {hasProfile && (
+          <div className="mb-10">
+            <h2 className="text-2xl font-bold mb-1">Suggested Matches</h2>
+            <p className="text-sm text-gray-400 mb-4">
+              Ranked by two-way skill fit, rating, and how much free time you share.
+            </p>
+
+            {suggestionsLoading ? (
+              <p className="text-gray-400">Finding your best matches...</p>
+            ) : suggestionsError ? (
+              <p className="text-gray-400">{suggestionsError}</p>
+            ) : suggestions.length === 0 ? (
+              <p className="text-gray-400">
+                No suggestions yet — add more skills or availability to your
+                profile to widen your matches.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {suggestions.map((s) => (
+                  <div
+                    key={s.user.id}
+                    className="bg-gradient-to-b from-indigo-950/60 to-[#1e293b] border border-indigo-800/50 rounded-2xl p-5 shadow-lg flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={
+                              s.user.avatar_url ||
+                              `https://i.pravatar.cc/150?u=${s.user.id}`
+                            }
+                            alt=""
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                          <h3 className="text-lg font-semibold">{s.user.name}</h3>
+                        </div>
+                        <span className="text-xs font-bold bg-purple-600 rounded-full px-2 py-1">
+                          {s.score}% match
+                        </span>
+                      </div>
+
+                      <p className="text-sm text-gray-300 mb-1">
+                        <span className="font-medium text-gray-200">
+                          They teach:
+                        </span>{" "}
+                        {s.user.skills?.length ? s.user.skills.join(", ") : "—"}
+                      </p>
+                      <p className="text-sm text-gray-300 mb-1">
+                        <span className="font-medium text-gray-200">
+                          They want to learn:
+                        </span>{" "}
+                        {s.user.skills_wanted?.length
+                          ? s.user.skills_wanted.join(", ")
+                          : "—"}
+                      </p>
+                      {s.user.average_rating ? (
+                        <p className="text-sm text-gray-300 mb-1">
+                          ⭐ {s.user.average_rating.toFixed(1)} ({s.user.review_count}{" "}
+                          review{s.user.review_count === 1 ? "" : "s"})
+                        </p>
+                      ) : (
+                        <p className="text-sm text-gray-400 mb-1">No reviews yet</p>
+                      )}
+                      {s.bestSlot && (
+                        <p className="text-sm text-gray-400 mb-2">
+                          Best shared time: {s.bestSlot.day} {s.bestSlot.start_time}–
+                          {s.bestSlot.end_time}
+                        </p>
+                      )}
+
+                      <div className="flex gap-2 text-[10px] text-gray-400 mb-3">
+                        <span>Skill fit {s.breakdown.skillReciprocity}%</span>
+                        <span>·</span>
+                        <span>Rating {s.breakdown.rating}%</span>
+                        <span>·</span>
+                        <span>Availability {s.breakdown.slotSize}%</span>
+                      </div>
+                    </div>
+
+                    <Button
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50"
+                      disabled={sentRequestIds.has(s.user.id)}
+                      onClick={() => handleSendRequest(s.user.id)}
+                    >
+                      {sentRequestIds.has(s.user.id) ? "Request Sent" : "Send Request"}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

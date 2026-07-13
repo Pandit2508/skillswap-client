@@ -74,5 +74,17 @@ export const submitReview = (bookingId, rating, comment) =>
 
 export const getUserReviews = (userId) => API.get(`/reviews/user/${userId}`);
 
+/* ================= MATCH SUGGESTIONS ================= */
+export const getSuggestedMatches = (limit = 10) =>
+  API.get("/match-requests/suggestions", { params: { limit } });
+
+/* ================= CHAT ================= */
+export const getConversations = () => API.get("/messages/conversations");
+
+export const getMessages = (userId) => API.get(`/messages/${userId}`);
+
+export const sendMessage = (userId, content) =>
+  API.post(`/messages/${userId}`, { content });
+
 export { BASE_URL };
 export default API;

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 import API from "../api/auth";
 
 const UpcomingMeetings = () => {
   const [meetings, setMeetings] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
   fetchMeetings();
@@ -126,6 +128,13 @@ const UpcomingMeetings = () => {
                     onClick={() => window.open(m.meeting_link, "_blank")}
                   >
                     Join Meeting
+                  </Button>
+
+                  <Button
+                    className="mt-4 ml-3 bg-cyan-600 hover:bg-cyan-700"
+                    onClick={() => navigate(`/messages/${person.id}`)}
+                  >
+                    Message
                   </Button>
                 </div>
               );
