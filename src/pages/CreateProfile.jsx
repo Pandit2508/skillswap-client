@@ -3,6 +3,36 @@ import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 import API, { getProfile } from "../api/auth";
 
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+/**
+ * Given a day name, return the name of the following day (wraps Sunday -> Monday).
+ */
+const getNextDay = (day) => {
+  const idx = DAYS.indexOf(day);
+  if (idx === -1) return "";
+  return DAYS[(idx + 1) % DAYS.length];
+};
+
+/**
+ * A slot is "overnight" (crosses midnight) whenever the end time is at or
+ * before the start time on a 24h clock, e.g. start 23:00 -> end 01:00.
+ * Equal start/end is treated as overnight too (a 24h block), rather than
+ * a zero-length slot.
+ */
+const isOvernight = (slot) => {
+  if (!slot.start_time || !slot.end_time) return false;
+  return slot.end_time <= slot.start_time;
+};
+
 const CreateProfile = () => {
   const navigate = useNavigate();
   const [isEdit, setIsEdit] = useState(false);
@@ -31,7 +61,14 @@ const CreateProfile = () => {
             bio: user.profile.bio || "",
             skills_offered: user.profile.skills?.join(", ") || "",
             skills_wanted: user.profile.skills_wanted?.join(", ") || "",
-            availability: user.profile.availability || [],
+            // Strip any previously-computed derived fields (end_day,
+            // spans_midnight) back out — they're recomputed on the fly
+            // from day/start_time/end_time so editing stays in sync.
+            availability: (user.profile.availability || []).map((slot) => ({
+              day: slot.day || "",
+              start_time: slot.start_time || "",
+              end_time: slot.end_time || "",
+            })),
             location: user.profile.location || "",
             experience: user.profile.experience || "",
           });
@@ -50,7 +87,7 @@ const CreateProfile = () => {
 
   const updateAvailability = (index, field, value) => {
     const updated = [...form.availability];
-    updated[index][field] = value;
+    updated[index] = { ...updated[index], [field]: value };
     setForm({ ...form, availability: updated });
   };
 
@@ -61,6 +98,13 @@ const CreateProfile = () => {
         ...form.availability,
         { day: "", start_time: "", end_time: "" },
       ],
+    });
+  };
+
+  const removeAvailability = (index) => {
+    setForm({
+      ...form,
+      availability: form.availability.filter((_, i) => i !== index),
     });
   };
 
@@ -77,6 +121,17 @@ const CreateProfile = () => {
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
+      // Enrich each availability slot with an explicit end_day and a
+      // spans_midnight flag so the backend / scheduling logic never has
+      // to re-derive "does this cross midnight" from raw time strings.
+      availability: form.availability.map((slot) => {
+        const overnight = isOvernight(slot);
+        return {
+          ...slot,
+          end_day: overnight ? getNextDay(slot.day) : slot.day,
+          spans_midnight: overnight,
+        };
+      }),
     };
 
     try {
@@ -134,34 +189,73 @@ const CreateProfile = () => {
 
       <div>
         <h3 className="text-xl font-semibold mb-2">Availability</h3>
-        {form.availability.map((slot, idx) => (
-          <div key={idx} className="grid grid-cols-3 gap-4 mb-2">
-            <input
-              placeholder="Day"
-              value={slot.day}
-              onChange={(e) =>
-                updateAvailability(idx, "day", e.target.value)
-              }
-              className="p-2 rounded-md text-black"
-            />
-            <input
-              type="time"
-              value={slot.start_time}
-              onChange={(e) =>
-                updateAvailability(idx, "start_time", e.target.value)
-              }
-              className="p-2 rounded-md text-black"
-            />
-            <input
-              type="time"
-              value={slot.end_time}
-              onChange={(e) =>
-                updateAvailability(idx, "end_time", e.target.value)
-              }
-              className="p-2 rounded-md text-black"
-            />
-          </div>
-        ))}
+
+        {form.availability.map((slot, idx) => {
+          const overnight = isOvernight(slot);
+          const nextDay = overnight ? getNextDay(slot.day) : "";
+
+          return (
+            <div key={idx} className="mb-3 p-3 rounded-md bg-gray-800">
+              <div className="grid grid-cols-3 gap-4">
+                <select
+                  value={slot.day}
+                  onChange={(e) =>
+                    updateAvailability(idx, "day", e.target.value)
+                  }
+                  className="p-2 rounded-md text-black"
+                >
+                  <option value="">Select Day</option>
+                  {DAYS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="time"
+                  value={slot.start_time}
+                  onChange={(e) =>
+                    updateAvailability(idx, "start_time", e.target.value)
+                  }
+                  className="p-2 rounded-md text-black"
+                />
+
+                <input
+                  type="time"
+                  value={slot.end_time}
+                  onChange={(e) =>
+                    updateAvailability(idx, "end_time", e.target.value)
+                  }
+                  className="p-2 rounded-md text-black"
+                />
+              </div>
+
+              {/* Cross-midnight indicator */}
+              {overnight && slot.day && (
+                <p className="text-sm text-yellow-400 mt-2">
+                  ⏰ Crosses midnight — runs from {slot.day}{" "}
+                  {slot.start_time} until {nextDay} {slot.end_time}.
+                </p>
+              )}
+              {overnight && !slot.day && (
+                <p className="text-sm text-yellow-400 mt-2">
+                  ⏰ This slot crosses midnight into the next day. Select a
+                  start day to see the full range.
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={() => removeAvailability(idx)}
+                className="text-red-400 text-sm mt-2 hover:underline"
+              >
+                Remove slot
+              </button>
+            </div>
+          );
+        })}
+
         <Button type="button" onClick={addAvailability}>
           + Add Availability
         </Button>
