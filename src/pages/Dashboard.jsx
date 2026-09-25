@@ -8,6 +8,7 @@ import {
   getSuggestedMatches,
 } from "../api/auth";
 import Button from "../components/ui/Button";
+import { formatAvailabilitySlot } from "../utils/availability";
 
 const Dashboard = () => {
   const [search, setSearch] = useState("");
@@ -199,9 +200,7 @@ const Dashboard = () => {
               {profile.profile.availability?.length ? (
                 <ul className="list-disc ml-5 mt-1">
                   {profile.profile.availability.map((a, i) => (
-                    <li key={i}>
-                      {a.day} — {a.start_time} to {a.end_time}
-                    </li>
+                    <li key={i}>{formatAvailabilitySlot(a)}</li>
                   ))}
                 </ul>
               ) : (
@@ -380,9 +379,7 @@ const Dashboard = () => {
                   {user.availability?.length ? (
                     <ul className="list-disc ml-5 mt-1">
                       {user.availability.map((a, i) => (
-                        <li key={i}>
-                          {a.day} — {a.start_time} to {a.end_time}
-                        </li>
+                        <li key={i}>{formatAvailabilitySlot(a)}</li>
                       ))}
                     </ul>
                   ) : (
